@@ -1,0 +1,21 @@
+# General
+*.pyc
+*.pyo
+__pycache__/
+*.so
+.DS_Store
+.idea/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+myenv/
+
+# Streamlit specific
+streamlit/  # If Streamlit creates cache or temp files
+
+# Ignore any logs or saved data files (adjust as needed)
+*.log
+*.csv
+*.json
