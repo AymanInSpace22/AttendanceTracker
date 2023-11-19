@@ -1,6 +1,7 @@
+import datetime
 import bcrypt
+import streamlit as st
 from globals import connection, month_mapping
-
 
 
 # Function to retrieve hashed password from the database
@@ -33,19 +34,17 @@ def add_employee(username, password, first_name, last_name, email, department=No
     cursor.close()
 
 # Function to add attendance for the user
-def add_attendance(user_id, date):
-    points = 10  # Points awarded for attending
-    cursor = connection.cursor()
-
-    # Insert attendance record into the database
-    insert_query = """
-    INSERT INTO employee_attendance (user_id, date_in_office, points_earned)
-    VALUES (%s, %s, %s)
-    """
-    cursor.execute(insert_query, (user_id, date, points))
-
-    connection.commit()
-    cursor.close()
+# def add_attendance(user_id, date):
+#     points = 10  # Points awarded for attending
+#     cursor = connection.cursor()
+#     # Insert attendance record into the database
+#     insert_query = """
+#     INSERT INTO employee_attendance (user_id, date_in_office, points_earned)
+#     VALUES (%s, %s, %s)
+#     """
+#     cursor.execute(insert_query, (user_id, date, points))
+#     connection.commit()
+#     cursor.close()
 
 def getDaysForUser(user_id):
     cursor = connection.cursor()
@@ -70,4 +69,52 @@ def countDaysPerMonth(user_id, selected_month):
     cursor.close()
     print(result)
     return result[0]
+
+# count month days for current month
+def countCurrentMonthDays(user_id):
+    current_month = datetime.datetime.now().month
+    cursor = connection.cursor()
+
+    query = "SELECT COUNT(date_in_office) FROM employee_attendance WHERE MONTH(date_in_office) = %s AND user_id = %s"
+    cursor.execute(query, (current_month, user_id))
     
+    result = cursor.fetchone()
+    cursor.close()
+    return result[0]
+
+
+# testing this one
+def displayDaysForCurentMonth(user_id, selected_month):
+    cursor = connection.cursor()
+    query = f"SELECT date_in_office FROM employee_attendance WHERE MONTH(date_in_office) = MONTH('{month_mapping[selected_month]}') AND user_id = %s order by date_in_office desc"
+    cursor.execute(query, (user_id,))
+    result = cursor.fetchall()
+    cursor.close()
+    return result
+
+
+
+def add_attendance(user_id, date):
+    points = 10  # Points awarded for attending
+    cursor = connection.cursor()
+
+    # Check if the attendance for the selected date exists
+    check_query = "SELECT COUNT(*) FROM employee_attendance WHERE user_id = %s AND date_in_office = %s"
+    cursor.execute(check_query, (user_id, date))
+    attendance_exists = cursor.fetchone()[0]
+
+    if attendance_exists:
+        st.error("Attendance for this date already exists!")
+    else:
+        # Insert attendance record into the database
+        insert_query = """
+        INSERT INTO employee_attendance (user_id, date_in_office, points_earned)
+        VALUES (%s, %s, %s)
+        """
+        cursor.execute(insert_query, (user_id, date, points))
+        connection.commit()
+        cursor.close()
+
+        # Show success message if attendance is added
+        st.balloons()
+        st.success("Attendance added successfully!")
