@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'TRAKIE-App'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FC7A9A5259984A1BB69859C04AA55CDB }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E1767095660548C0813EB4BB6705FBEC }}
