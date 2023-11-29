@@ -33,18 +33,6 @@ def add_employee(username, password, first_name, last_name, email, department=No
     connection.commit()
     cursor.close()
 
-# Function to add attendance for the user
-# def add_attendance(user_id, date):
-#     points = 10  # Points awarded for attending
-#     cursor = connection.cursor()
-#     # Insert attendance record into the database
-#     insert_query = """
-#     INSERT INTO employee_attendance (user_id, date_in_office, points_earned)
-#     VALUES (%s, %s, %s)
-#     """
-#     cursor.execute(insert_query, (user_id, date, points))
-#     connection.commit()
-#     cursor.close()
 
 def getDaysForUser(user_id):
     cursor = connection.cursor()
@@ -54,7 +42,7 @@ def getDaysForUser(user_id):
     cursor.close()
     return result
 
-
+# count month days for selected month
 def countDaysPerMonth(user_id, selected_month):
     cursor = connection.cursor()
     #it shouls be pulling the count based on the user_id
@@ -118,3 +106,19 @@ def add_attendance(user_id, date):
         # Show success message if attendance is added
         st.balloons()
         st.success("Attendance added successfully!")
+
+
+
+# count month days for current month
+def countAllTimeDays(user_id):
+    # current_month = datetime.datetime.now().month
+    cursor = connection.cursor()
+
+    query = "SELECT COUNT(date_in_office) FROM employee_attendance WHERE user_id = %s"
+    cursor.execute(query, (user_id,))
+    
+    result = cursor.fetchone()
+    cursor.close()
+    return result[0]
+
+

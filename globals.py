@@ -1,13 +1,30 @@
 import mysql.connector
 
 # Establish MySQL connection
+# connection = mysql.connector.connect(
+#     host='localhost',
+#     port='3306',
+#     user='root',
+#     password='root', 
+#     database='attendancedb'   
+# )
+
+# AZURE db connection
 connection = mysql.connector.connect(
-    host='localhost',
+    host='trakie.mysql.database.azure.com',
     port='3306',
-    user='root',
-    password='root', 
+    user='aboulad',
+    password='Streamlit$trackie', 
     database='attendancedb'   
 )
+
+# connection = mysql.connector.connect(
+#     host='trakie-db.cfkt7v9xvpzc.us-east-2.rds.amazonaws.com',
+#     port='3306',
+#     user='admin',
+#     password='Streamlit$trackie', 
+#     database='attendancedb'   
+# )
 
 month_mapping = {
     "JANUARY": "1999-01-01",
@@ -24,4 +41,4 @@ month_mapping = {
     "DECEMBER": "1999-12-01"
 }
 
-print(month_mapping)
+# print(month_mapping)

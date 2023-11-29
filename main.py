@@ -1,19 +1,36 @@
 import calendar
 import streamlit as st
 import pandas as pd
-from index import getDaysForUser, countDaysPerMonth, add_attendance, add_employee, get_hashed_password, verify_password, countCurrentMonthDays, displayDaysForCurentMonth
+from index import getDaysForUser, countDaysPerMonth, add_attendance, add_employee, get_hashed_password, verify_password, countCurrentMonthDays, displayDaysForCurentMonth, countAllTimeDays
 from globals import connection, month_mapping
-from styles import remove_black_overlay, page_bg_color, login, attendance, rainbow_divider
+from styles import remove_black_overlay, page_bg_color, login, attendance, rainbow_divider, hide_streamlit_style, sidebar_bg, custom_styles
 
 import plotly.express as px
 from datetime import datetime
+from PIL import Image
+
+st.set_page_config(
+    page_title="TRAKIE",
+    page_icon="🗓️",
+    # layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://www.extremelycoolapp.com/help',
+        'Report a bug': "https://www.extremelycoolapp.com/bug",
+        'About': "# This is a header. This is an *extremely* cool app!",
+    }
+)
 
 
+
+st.markdown(sidebar_bg, unsafe_allow_html=True)
 
 # Apply the custom CSS
 st.markdown(remove_black_overlay, unsafe_allow_html=True)
 st.markdown(page_bg_color, unsafe_allow_html=True)
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
+st.markdown(custom_styles, unsafe_allow_html=True)
 
 # Streamlit app
 # st.title("Login and Attendance Tracking")
@@ -24,11 +41,22 @@ if st.session_state.logged_in:
     username = st.session_state.username
     user_id = st.session_state.user_id
 
-    # st.header("Attendance Tracking",divider='rainbow')
-    # st.write(f"Welcome, {username}")
 
-    st.markdown(attendance, unsafe_allow_html=True)
+    attendanceLogo = "public/trakie-high-resolution-logo-transparent.png"
+    image2 = Image.open(attendanceLogo)
+    # new_image = image2.resize((415))
+    st.image(image2, width=400)
+    # st.image(new_image, use_column_width=True)
+    # st.image(image2, use_container_width=True)
+
+
+        
+
+
+    # st.markdown(attendance, unsafe_allow_html=True)
     st.markdown(rainbow_divider, unsafe_allow_html=True)
+
+
 
     st.sidebar.header("Welcome,")
     st.sidebar.subheader(username)
@@ -82,7 +110,6 @@ if st.session_state.logged_in:
 
     tab1, tab2 = st.tabs(["Month Data", "All Time"])
     with tab1:
-        # testing
         st.write("Select a month to display days")
         selected_month = st.selectbox("Select a month", list(month_mapping.keys()))
         print(month_mapping[selected_month])
@@ -92,11 +119,13 @@ if st.session_state.logged_in:
             dates = [date[0] for date in result]  # Extract the actual date from the result
             df = pd.DataFrame(dates, columns=['Date'])  # Create a DataFrame with only the 'Date' column
             st.dataframe(df, hide_index=True)
-
+        
         # Section for counting attendance
         if st.button("Get Month Count"):
             result = countDaysPerMonth(user_id, selected_month)
-            st.text(result)
+            count_df = pd.DataFrame([result], columns=['Month Count'])  # Creating a DataFrame for the count value
+            st.dataframe(count_df, hide_index=True)
+            # st.text(result)  # Optionally display the count as text as well
 
     with tab2:
             # get all time days
@@ -107,6 +136,11 @@ if st.session_state.logged_in:
             df = pd.DataFrame(dates, columns=['Date'])  # Create a DataFrame with only the 'Date' column
             st.dataframe(df, hide_index=True)
 
+        if st.button("Get All Time Count"):
+            result = countAllTimeDays(user_id)
+            count_df = pd.DataFrame([result], columns=['All Time Count'])
+            st.dataframe(count_df, hide_index=True)
+
 
 
 
@@ -115,8 +149,39 @@ else:
     # st.header(heading, divider='rainbow')
     # st.header("", divider='rainbow')
 
-    st.markdown(login, unsafe_allow_html=True)
+    # st.markdown(login, unsafe_allow_html=True)
+
+    header_image_path = "public/login_image.png"
+    # st.image(header_image_path, use_column_width=True)
+
+
+    image = Image.open(header_image_path)
+    new_image = image.resize((360, 142))
+    st.image(new_image)
+
+
+    # attendanceLogo = "public/trakie-high-resolution-logo-transparent.png"
+    # image2 = Image.open(attendanceLogo)
+    # # new_image = image2.resize((auto, auto))
+    # st.image(image2)
+
+ 
+
+    # trakie = "Untitled_ArtWork-1.png"
+
+    # image = Image.open(trakie)
+    # new_image = image.resize((400, 400))
+    # st.image(new_image)
+
+
+
+    calenderImage = "https://th.bing.com/th/id/R.66bbcea209af9edbb59140f62d573d53?rik=h1CJ1UxzIG%2fHrA&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fpng-hd-calendar--1000.png&ehk=AvWyubl9DIBiQerkB9euHBWu59PClZLvnGSkAJtJ%2bMQ%3d&risl=&pid=ImgRaw&r=0"
+    st.image(calenderImage, use_column_width=True)
+
     st.markdown(rainbow_divider, unsafe_allow_html=True)
+
+    # st.markdown(header_image, unsafe_allow_html=True)
+
 
     option = st.radio("Choose an option:", ("Login", "Register"))
 
